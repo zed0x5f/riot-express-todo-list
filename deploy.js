@@ -54,8 +54,11 @@ function transferProjectToRemote(failed, successful) {
 
 // creates a temporary folder on the remote server
 function createRemoteTempFolder() {
+    var command = `rm -rf ${app_folder_name}-temp && mkdir ${app_folder_name}-temp`;
+    //console.log("check this command")
+    //console.log(command);
     return ssh.execCommand(
-        `rm -rf ${app_folder_name}-temp && mkdir ${app_folder_name}-temp`, {
+        command, {
         cwd: '/home/ubuntu'
     });
 }
@@ -69,9 +72,19 @@ function stopRemoteServices() {
 }
 
 // updates the project source on the server
-function updateRemoteApp() {
+function updateRemoteAppPre() {
+    var command = `mkdir ${app_folder_name}`
     return ssh.execCommand(
-        `mkdir ${app_folder_name} && cp -r ${app_folder_name}-temp/* ${app_folder_name}/ && rm -rf ${app_folder_name}-temp`, {
+        command, {
+        cwd: '/home/ubuntu'
+    });
+}
+function updateRemoteApp() {
+    var command = `cp -r ${app_folder_name}-temp/* ${app_folder_name}/ && rm -rf ${app_folder_name}-temp`
+    console.log("command 2")
+    console.log(command)
+    return ssh.execCommand(
+        command, {
         cwd: '/home/ubuntu'
     });
 }
@@ -121,6 +134,15 @@ function sshConnect() {
             if (status) {
                 console.log('Stopping remote services.');
                 return stopRemoteServices();
+            } else {
+                return Promise.reject(failed.join(', '));
+            }
+        })
+        //mkdir ${app_folder_name}
+        .then(function (status) {
+            if (status) {
+                console.log('Updating remote app pre');
+                return updateRemoteAppPre();
             } else {
                 return Promise.reject(failed.join(', '));
             }

@@ -1,6 +1,6 @@
 let app_folder_name = 'riot-express-todo-list';
 let privateKey = 'keys/hs-key.pem';
-let host = 'ec2-34-239-132-42.compute-1.amazonaws.com';
+let host = 'ec2-54-146-137-201.compute-1.amazonaws.com';
 
 
 //npm install node-cmd node-ssh
